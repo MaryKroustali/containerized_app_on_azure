@@ -1,0 +1,34 @@
+﻿@model IEnumerable<WebApplication8.Models.Album>
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    ViewBag.Title = "Index";
+}
+<p> its okay</p>
+
+
+<table class="table">
+
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Artist.Name)
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(model => item.Artist.Name)
+            </td>
+
+        </tr>
+    }
+
+</table>
+

@@ -1,0 +1,22 @@
+﻿@model IEnumerable<WebApplication8.Models.Track>
+
+<h2> Top 10 Tracks</h2>
+<br />
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+       
+    </tr>
+}
+
+</table>

@@ -1,0 +1,35 @@
+﻿@model IEnumerable<WebApplication8.Models.Genre>
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+@{
+    ViewBag.Title = "Genres";
+}
+
+<h2>Genres</h2>
+
+
+<p class="choose">
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td class="choose">
+                @Html.ActionLink("Edit", "Edit", new { id = item.GenreId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.GenreId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.GenreId })
+            </td>
+        </tr>
+    }
+
+</table>
