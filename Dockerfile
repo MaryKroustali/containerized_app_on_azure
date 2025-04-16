@@ -19,20 +19,3 @@ COPY --from=build /source/WebApplication8/obj/Release/ ./
 EXPOSE 80
 # Run the DLL with Mono
 ENTRYPOINT ["xsp4", "--port", "80", "--address", "0.0.0.0"]
-
-
-## code changes
-# sed -i 's/(HttpStatusCode/((int)HttpStatusCode/g' *
-# comment out <!-- <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" /> -->
-
-# docker commands
-# sudo docker build -t counter-image -f Dockerfile .
-# sudo docker run -p 80:8080 -it --rm counter-image
-
-# https://learn.microsoft.com/en-us/aspnet/mvc/overview/deployment/docker-aspnetmvc#publish-script
-
-# The `FROM` instruction specifies the base image. You are
-# extending the `mcr.microsoft.com/dotnet/framework/aspnet:4.8` image.
-FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8
-# The final instruction copies the site you published earlier into the container.
-COPY ./bin/Release/PublishOutput/ /inetpub/wwwroot
