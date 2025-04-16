@@ -10,6 +10,9 @@ param image string
 @description('The exposed ports on the container instance.')
 param port int
 
+@description('Id of the delegated subnet of type \'Microsoft.ContainerInstance/containerGroups\'')
+param app_snet_id string
+
 resource ci 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
   name: name
   location: location
@@ -45,5 +48,10 @@ resource ci 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
         }
       ]
     }
+    subnetIds: [
+      {
+        id: app_snet_id // Integrate with private network
+      }
+    ]
   }
 }

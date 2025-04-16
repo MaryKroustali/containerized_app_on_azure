@@ -62,9 +62,31 @@ jobs:
           region: 'westeurope'
           template: ./bicep/rgs/common.bicep
           parameters: application=${{ inputs.application }} sql_server_admin_username=${{ secrets.SQL_SERVER_ADMIN_USERNAME }} sql_server_admin_password=${{ secrets.SQL_SERVER_ADMIN_PASSWORD }} vm_admin_username=${{ secrets.VM_ADMIN_USERNAME }} vm_admin_password=${{ secrets.VM_ADMIN_PASSWORD }} github_pat=${{ secrets.PAT }}
+  push_to_registry:
+    name: Push Image to Registry
+    needs: deploy_common_infra
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Upgrade to latest Bicep version"
+        run: az bicep upgrade
+      - name: "Login to Azure"
+        uses: azure/login@v1
+        with:
+          # Set secrets value as described in https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect#prerequisites
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: "Pull image from Github Container Registry"
+        run: |
+          docker pull ghcr.io/marykroustali/record-store-app:1.0.0
+      - name: "Login to Azure registry, tag and push image"
+        run: |
+          docker login --name ACR_NAME
+          docker tag ghcr.io/marykroustali/record-store-app:1.0.0 ACR_NAME.azurecr.io/record-store-app:1.0.0
+          docker push ACR_NAME.azurecr.io/record-store-app:1.0.0
   deploy_application_infra:
     name: Deploy Application Infrastructure
-    needs: deploy_common_infra
+    needs: push_to_registry
     runs-on: ubuntu-latest
     steps:
       - name: "Upgrade to latest Bicep version"

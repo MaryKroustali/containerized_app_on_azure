@@ -5,10 +5,10 @@ targetScope = 'subscription'
 param application string
 
 var dns_zones = [  // Names of the private Azure DNS zones needed for private networking https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns 
-  'privatelink.azurewebsites.net'  // zone for web apps
   #disable-next-line no-hardcoded-env-urls
   'privatelink.database.windows.net'  // zone for sql servers
   'privatelink.vaultcore.azure.net' // zone for key vault
+  'privatelink.azurecr.io' // zone for container registry
 ]
 
 
@@ -24,16 +24,16 @@ module vnet '../modules/network/vnet.bicep' = { // Private Virtual Network
     address_prefixes: ['10.1.0.0/26']
     name: 'vnet-${application}'
     subnets: [
-      { // Subnet for webapps, must be delegated for 'Microsoft.Web/serverFarms'
+      { // Subnet for container instances, must be delegated for 'Microsoft.ContainerInstance/containerGroups'
         // https://learn.microsoft.com/en-us/azure/virtual-network/subnet-delegation-overview
         name: 'snet-app-vnet-${application}'
         properties: {
           addressPrefix: '10.1.0.0/28'
           delegations: [
             {
-              name: 'Microsoft.Web.serverFarms'
+              name: 'Microsoft.ContainerInstance/containerGroups'
               properties: {
-                serviceName: 'Microsoft.Web/serverFarms'
+                serviceName: 'Microsoft.ContainerInstance/containerGroups'
               }
             }
           ]

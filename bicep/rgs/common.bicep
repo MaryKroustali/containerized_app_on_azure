@@ -33,6 +33,18 @@ resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   location: 'northeurope'
 }
 
+module acr '../modules/container/registry.bicep' = {
+  scope: rg
+  name: 'deploy-acr-${application}'
+  params: {
+    name: 'acr-${application}'
+    pep_snet_id: snet_pep.id
+    vnet_rg_name: vnet_rg_name
+    sku: 'Premium'  // Premium SKU required for private registry
+    public_network_access: 'Disabled'
+  }
+}
+
 module kv '../modules/keyvault/vault.bicep' = {
   scope: rg
   name: 'deploy-kv-${application}'
