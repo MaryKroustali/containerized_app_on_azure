@@ -1,0 +1,46 @@
+name: Import Data to Database
+
+on:  # Trigger this workflow manually
+  workflow_dispatch:
+    inputs:
+      application:
+        description: 'Application Workload'
+        required: true
+        default: 'record-store'
+      application_repo:
+        description: 'Repository with Application Code'
+        required: true
+        default: 'MaryKroustali/record_store_app'
+      database:
+        description: 'Database Name'
+        required: true
+        default: 'chinook'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  import_data_to_db:
+    name: Import Data to SQL Database
+    runs-on: self-hosted
+    steps:
+      - name: "Checkout Application repository"
+        uses: actions/checkout@main
+        with:
+          repository: ${{ inputs.application_repo }}
+          path: record_store_app
+      - name: "Login to Azure"
+        uses: azure/login@v1
+        with:
+          # Set secrets value as described in https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect#prerequisites
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        env:
+          PATH: C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Users\vmadmin\AppData\Local\Microsoft\WindowsApps;
+      - name: "Import Data to Database"
+        uses: Azure/sql-action@v2.2.1
+        with:
+          connection-string: 'Server=tcp:sql-${{ inputs.application }}.database.windows.net,1433;Initial Catalog=${{ inputs.database }}; User ID=${{ secrets.SQL_SERVER_ADMIN_USERNAME }}; Password=${{ secrets.SQL_SERVER_ADMIN_PASSWORD }}; Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+          path: record_store_app/SQL/${{ inputs.database }}.sql
