@@ -3,7 +3,6 @@
 # Additionally to run as a service follow instructions on
 # https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/configuring-the-self-hosted-runner-application-as-a-service
 
-
 # Define your variables
 token="$1"
 org="MaryKroustali"  # Replace with your GitHub organization name
@@ -14,7 +13,7 @@ sudo apt-get update -y
 sudo apt-get install jq -y
 
 # Set Github Runner
-cd C:/ # Create a folder under admin directory
+cd /home/vmadmin/ # Create a folder under admin directory
 mkdir actions-runner; cd actions-runner # Download the latest runner package
 curl -o actions-runner-linux-x64-2.323.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.323.0/actions-runner-linux-x64-2.323.0.tar.gz # Extract the installer
 tar xzf ./actions-runner-linux-x64-2.323.0.tar.gz
@@ -31,8 +30,9 @@ curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 az --version
 
 # Install Docker
+export DEBIAN_FRONTEND=noninteractive # Install Docker silently (non-interactive, auto-confirm everything)
 sudo apt-get update -y
-sudo apt-get install -y ca-certificates curl
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
 sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
