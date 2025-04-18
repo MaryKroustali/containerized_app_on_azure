@@ -1,4 +1,4 @@
-name: Deploy Infrastructure Container
+name: Push Image to ACR
 
 on:  # Trigger this workflow manually
   workflow_dispatch:
