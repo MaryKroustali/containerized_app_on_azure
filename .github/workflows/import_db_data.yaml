@@ -44,3 +44,5 @@ jobs:
         with:
           connection-string: 'Server=tcp:sql-${{ inputs.application }}.database.windows.net,1433;Initial Catalog=${{ inputs.database }}; User ID=${{ secrets.SQL_SERVER_ADMIN_USERNAME }}; Password=${{ secrets.SQL_SERVER_ADMIN_PASSWORD }}; Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
           path: record_store_app/SQL/${{ inputs.database }}.sql
+        env:
+          PATH: C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Docker\CLI;C:\Windows\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Users\vmadmin\AppData\Local\Microsoft\WindowsApps;
