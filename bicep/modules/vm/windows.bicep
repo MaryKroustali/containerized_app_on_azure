@@ -157,7 +157,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-09-01' = {
 // Configures Virtual Machine as a GitHub Runner to run workflows on private resources
 resource ext 'Microsoft.Compute/virtualMachines/extensions@2024-07-01' = {
   parent: vm
-  name: 'AzureDevopsAgent'
+  name: 'GithubRunner'
   location: location
   properties: {
     publisher: 'Microsoft.Compute'

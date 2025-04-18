@@ -11,7 +11,7 @@ param nsg_id string
 param snet_id string
 
 resource nic 'Microsoft.Network/networkInterfaces@2023-11-01' = {
-  name: 'nic-${name}'
+  name: name
   location: location
   properties: {
     networkSecurityGroup: {
