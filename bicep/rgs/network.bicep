@@ -64,13 +64,13 @@ module dns '../modules/network/dns.bicep' = [ for name in dns_zones: {
   }
 } ]
 
-// Resource to access private resources using a public IP safely
-module bastion '../modules/network/bastion.bicep' = {
-  scope: rg
-  name: 'deploy-bastion-${application}'
-  params: {
-    name: 'bastion-${application}'
-    sku_name: 'Basic'
-    snet_id: vnet.outputs.bastion_snet_id
-  }
-}
+// // Resource to access private resources using a public IP safely
+// module bastion '../modules/network/bastion.bicep' = {
+//   scope: rg
+//   name: 'deploy-bastion-${application}'
+//   params: {
+//     name: 'bastion-${application}'
+//     sku_name: 'Basic'
+//     snet_id: vnet.outputs.bastion_snet_id
+//   }
+// }

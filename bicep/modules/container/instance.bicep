@@ -13,6 +13,13 @@ param port int
 @description('Id of the delegated subnet of type \'Microsoft.ContainerInstance/containerGroups\'')
 param app_snet_id string
 
+@description('Id of the log analytics workspace for container insights.')
+param log_id string
+
+@description('Key of the log analytics workspace for container insights.')
+@secure()
+param log_key string
+
 resource ci 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
   name: name
   location: location
@@ -53,5 +60,12 @@ resource ci 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
         id: app_snet_id // Integrate with private network
       }
     ]
+    diagnostics: {
+      logAnalytics: {
+        logType: 'ContainerInstanceLogs'
+        workspaceId: log_id
+        workspaceKey: log_key
+      }
+    }
   }
 }

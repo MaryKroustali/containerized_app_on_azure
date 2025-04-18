@@ -1,0 +1,40 @@
+name: Deploy Infrastructure Container
+
+on:  # Trigger this workflow manually
+  workflow_dispatch:
+    inputs:
+      image_name:
+        description: 'Container image'
+        required: true
+        default: 'record-store-app'
+      image_tag:
+        description: 'Image Tag'
+        required: true
+        default: '1.0.0'
+      image_registry:
+        description: 'Container Registry Name'
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+push_to_registry:
+  name: Push Image to Registry
+  runs-on: self-hosted # Use a self-hosted runner to upload the image to the private acr
+  steps:
+    - name: "Login to Azure"
+      uses: azure/login@v1
+      with:
+        # Set secrets value as described in https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect#prerequisites
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - name: "Pull image from Github Container Registry"
+      run: |
+        docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
+    - name: "Login to Azure registry, tag and push image"
+      run: |
+        docker login --name ${{ inputs.image_registry }}
+        docker tag ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }} ${{ inputs.image_registry }}.azurecr.io/${{ inputs.image_name }}:${{ inputs.image_tag }}
+        docker push ${{ inputs.image_registry }}.azurecr.io/${{ inputs.image_name }}:${{ inputs.image_tag }}

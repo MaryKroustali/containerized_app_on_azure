@@ -1,0 +1,37 @@
+name: Deploy Container Infrastructure
+
+on:  # Trigger this workflow manually
+  workflow_dispatch:
+    inputs:
+      application:
+        description: 'Application Workload'
+        required: true
+        default: 'record-store'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy_application_infra:
+    name: Deploy Container Infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Upgrade to latest Bicep version"
+        run: az bicep upgrade
+      - name: "Login to Azure"
+        uses: azure/login@v1
+        with:
+          # Set secrets value as described in https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect#prerequisites
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: "Checkout repository"
+        uses: actions/checkout@main
+      - name: "Deploy in Subscription scope"
+        uses: azure/arm-deploy@v2
+        with:
+          scope: 'subscription'
+          region: 'westeurope'
+          template: ./bicep/rgs/application.bicep
+          parameters: application=${{ inputs.application }}

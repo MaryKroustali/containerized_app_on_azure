@@ -28,7 +28,6 @@ resource log 'Microsoft.OperationalInsights/workspaces@2023-09-01' existing = {
   name: log_name
 }
 
-
 resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   name: 'rg-application-infra-${application}'
   location: 'northeurope'
@@ -42,14 +41,7 @@ module ci '../modules/container/instance.bicep' = {
     app_snet_id: snet_app.id
     image: '${acr_url}/record-store-app:1.0.0'
     port: 8080
-  }
-}
-
-module appi '../modules/container/insights.bicep' = {
-  scope: rg
-  name: 'deploy-appi-${application}'
-  params: {
-    name: 'appi-${application}'
-    log_id: log.id
+    log_id: log.properties.customerId
+    log_key: log.listKeys().primarySharedKey
   }
 }
