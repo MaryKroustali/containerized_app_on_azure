@@ -25,21 +25,20 @@ response=$(curl -s -L \
 registrationToken=$(echo "$response" | jq -r .token)
 ./config.sh --runasservice --unattended --url https://github.com/$org/$repo/ --token $registrationToken --replace # Create the runner and start running as a service
 
-# Install az cli
-curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-az --version
+# # Install az cli
+# curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+# az --version
 
-# Install Docker
-export DEBIAN_FRONTEND=noninteractive # Install Docker silently (non-interactive, auto-confirm everything)
-sudo apt-get update -y
-sudo apt-get install -y ca-certificates curl gnupg lsb-release
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update -y
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-docker --version
+# # Install Docker
+# sudo apt-get update -y
+# sudo apt-get install -y ca-certificates curl gnupg lsb-release
+# sudo install -m 0755 -d /etc/apt/keyrings
+# curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+# sudo chmod a+r /etc/apt/keyrings/docker.asc
+# echo \
+#   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+#   $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+#   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# sudo apt-get update -y
+# sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# docker --version
