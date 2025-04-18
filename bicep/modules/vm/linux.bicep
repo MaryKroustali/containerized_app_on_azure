@@ -161,9 +161,9 @@ resource ext 'Microsoft.Compute/virtualMachines/extensions@2024-07-01' = {
   name: 'GithubRunner'
   location: location
   properties: {
-    publisher: 'Microsoft.Compute'
-    type: 'CustomScriptExtension'
-    typeHandlerVersion: '1.10'
+    publisher: 'Microsoft.Azure.Extensions'
+    type: 'CustomScript'
+    typeHandlerVersion: '2.1'
     autoUpgradeMinorVersion: true
     settings: {
       fileUris: [ 'https://raw.githubusercontent.com/MaryKroustali/containerized_app_on_azure/main/scripts/buildagent.sh' ]  // script configuring the runner
