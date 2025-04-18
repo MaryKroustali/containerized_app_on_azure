@@ -108,16 +108,16 @@ module log '../modules/log/workspace.bicep' = {
   }
 }
 
-module vm '../modules/vm/windows.bicep' = {
+module vm '../modules/vm/linux.bicep' = {
   scope: rg
   name: 'deploy-vm-${application}'
   params: {
     name: 'vm-${application}'
     admin_password: vm_admin_password
     admin_username: vm_admin_username
-    image_offer: 'WindowsServer'
-    image_publisher: 'MicrosoftWindowsServer'
-    image_sku: '2022-Datacenter'
+    image_offer: '0001-com-ubuntu-server-jammy'
+    image_publisher: 'Canonical'
+    image_sku: '22_04-lts'
     snet_id: snet_pep.id
     vm_size: 'Standard_B1ms'
     vnet_rg_name: vnet_rg_name

@@ -6,7 +6,7 @@ param name string
 @description('Resource Location.')
 param location string = resourceGroup().location
 
-@description('''Specifies the name of the administrator account of the Windows Virtual Machine.
+@description('''Specifies the name of the administrator account of the Virtual Machine.
 
 Disallowed values: "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5".
 
@@ -17,7 +17,7 @@ This property cannot be updated after the VM is created.
 @maxLength(20)
 param admin_username string
 
-@description('''Specifies the password of the administrator account of the Windows Virtual Machine.
+@description('''Specifies the password of the administrator account of the Virtual Machine.
 
 Complexity requirements: 3 out of 4 conditions below need to be fulfilled:
 - Has lower characters
@@ -73,13 +73,13 @@ module nsg '../network/nsg.bicep' = {
     name: 'nsg-${name}'
     security_rules: [
       {
-        name: 'Allow-RDP'
+        name: 'Allow-SSH'
         properties: {
           access: 'Allow'
           direction: 'Inbound'
           priority: 100
           protocol: 'Tcp'
-          destinationPortRange: '3389'  // Allow incoming traffic in 3389 (RDP) for Bastion Host
+          destinationPortRange: '22'  // Allow incoming traffic in 22 (SSH) for Bastion Host
           sourcePortRange: '*'
           sourceAddressPrefix: '*'
           destinationAddressPrefix: '*'
@@ -114,19 +114,20 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-09-01' = {
       computerName: name
       adminUsername: admin_username
       adminPassword: admin_password
-      windowsConfiguration: {
+      linuxConfiguration: {
+        disablePasswordAuthentication: false
         patchSettings: {
-          patchMode: 'AutomaticByPlatform'
+          assessmentMode: 'AutomaticByPlatform'
           automaticByPlatformSettings: {
             bypassPlatformSafetyChecksOnUserSchedule: true
           }
-          assessmentMode: 'AutomaticByPlatform'
+          patchMode: 'AutomaticByPlatform'
         }
       }
     }
     storageProfile: {
       osDisk: {
-        osType: 'Windows'
+        osType: 'Linux'
         createOption: 'FromImage'
         caching: 'ReadWrite'
         managedDisk: {
@@ -165,10 +166,10 @@ resource ext 'Microsoft.Compute/virtualMachines/extensions@2024-07-01' = {
     typeHandlerVersion: '1.10'
     autoUpgradeMinorVersion: true
     settings: {
-      fileUris: [ 'https://raw.githubusercontent.com/MaryKroustali/containerized_app_on_azure/main/scripts/buildagent.ps1' ]  // script configuring the runner
+      fileUris: [ 'https://raw.githubusercontent.com/MaryKroustali/containerized_app_on_azure/main/scripts/buildagent.sh' ]  // script configuring the runner
     }
     protectedSettings: {
-      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File buildagent.ps1 -token ${github_pat}'  // run the script upon initializing the Virtual Machine
+      commandToExecute: 'bash buildagent.sh ${github_pat}'  // run the script upon initializing the Virtual Machine
     }
   }
 }

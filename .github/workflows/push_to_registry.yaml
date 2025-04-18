@@ -23,9 +23,6 @@ permissions:
   id-token: write
   contents: read
 
-env:
-  PATH: C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files\Docker\CLI;C:\Users\vmadmin\AppData\Local\Microsoft\WindowsApps;
-
 jobs:
   push_to_registry:
     name: Push Image to Registry
