@@ -19,9 +19,9 @@ $installPath = "$env:ProgramFiles\Docker\CLI"
 # Set Github Runner
 cd C:/ # Create a folder under admin directory
 mkdir actions-runner; cd actions-runner # Download the latest runner package
-Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v2.321.0/actions-runner-win-x64-2.321.0.zip -OutFile actions-runner-win-x64-2.321.0.zip # Extract the installer
-Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-2.321.0.zip", "$PWD")
-$response = Invoke-RestMethod -Uri "https://api.github.com/repos/$org/$repo/actions/runners/registration-token" ` # Make the API call to get the registration token
+Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v2.323.0/actions-runner-win-x64-2.323.0.zip -OutFile actions-runner-win-x64-2.323.0.zip # Extract the installer
+Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-2.323.0.zip", "$PWD")
+$response = Invoke-RestMethod -Uri "https://api.github.com/repos/$org/$repo/actions/runners/registration-token" `
     -Method Post `
     -Headers @{
         "Accept" = "application/vnd.github+json"
