@@ -165,7 +165,7 @@ resource ext 'Microsoft.Compute/virtualMachines/extensions@2024-07-01' = {
     typeHandlerVersion: '1.10'
     autoUpgradeMinorVersion: true
     settings: {
-      fileUris: [ 'https://raw.githubusercontent.com/MaryKroustali/private_app_on_azure/main/scripts/buildagent.ps1' ]  // script configuring the runner
+      fileUris: [ 'https://raw.githubusercontent.com/MaryKroustali/containerized_app_on_azure/main/scripts/buildagent.ps1' ]  // script configuring the runner
     }
     protectedSettings: {
       commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File buildagent.ps1 -token ${github_pat}'  // run the script upon initializing the Virtual Machine

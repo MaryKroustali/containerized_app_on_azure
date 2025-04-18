@@ -3,14 +3,13 @@
 targetScope = 'subscription'
 
 param application string
+param image string
 
 var vnet_rg_name = 'rg-network-infra-${application}'
 var snet_app_name = 'snet-app-vnet-${application}'
 var vnet_name = 'vnet-${application}'
 var common_rg_name = 'rg-common-infra-${application}'
 var log_name = 'log-${application}'
-var acr_url = toLower(replace(take('acr-${application}${uniqueString(rg.id)}', 20), '-', '')) // lowercase, remove hyphens, unique suffix, 20 characters long
-
 
 // Existing resources from previous deployments
 resource vnet 'Microsoft.Network/virtualNetworks@2024-03-01' existing = {
@@ -39,7 +38,7 @@ module ci '../modules/container/instance.bicep' = {
   params: {
     name: 'ci-${application}'
     app_snet_id: snet_app.id
-    image: '${acr_url}/record-store-app:1.0.0'
+    image: image
     port: 8080
     log_id: log.properties.customerId
     log_key: log.listKeys().primarySharedKey
