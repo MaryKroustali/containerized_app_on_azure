@@ -14,16 +14,18 @@ sudo apt-get install jq -y
 
 # Set Github Runner
 cd /home/vmadmin/ # Create a folder under admin directory
-mkdir actions-runner; cd actions-runner # Download the latest runner package
-curl -o actions-runner-linux-x64-2.323.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.323.0/actions-runner-linux-x64-2.323.0.tar.gz # Extract the installer
-tar xzf ./actions-runner-linux-x64-2.323.0.tar.gz
+mkdir actions-runner; cd actions-runner 
+curl -o actions-runner-linux-x64-2.323.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.323.0/actions-runner-linux-x64-2.323.0.tar.gz # Download the latest runner package
+tar xzf ./actions-runner-linux-x64-2.323.0.tar.gz # Extract the installer
 response=$(curl -s -L \
   -X POST "https://api.github.com/repos/$org/$repo/actions/runners/registration-token" \
   -H "Accept: application/vnd.github+json" \
   -H "Authorization: Bearer $token" \
   -H "X-GitHub-Api-Version: 2022-11-28")
 registrationToken=$(echo "$response" | jq -r .token)
-./config.sh --runasservice --unattended --url https://github.com/$org/$repo/ --token $registrationToken --replace # Create the runner and start running as a service
+./config.sh --unattended --url https://github.com/$org/$repo/ --token $registrationToken --replace # Create the runner and start running as a service
+sudo ./svc.sh install
+sudo ./svc.sh start
 
 # Install az cli
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
