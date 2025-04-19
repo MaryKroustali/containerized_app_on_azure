@@ -9,8 +9,8 @@ org="MaryKroustali"  # Replace with your GitHub organization name
 repo="containerized_app_on_azure"  # Replace with your GitHub repository name
 
 # Install helping tools
-# sudo apt-get update -y
-# sudo apt-get install jq -y
+sudo apt-get update -y
+sudo apt-get install jq -y
 
 # Set Github Runner
 cd /home/vmadmin/ # Create a folder under admin directory
