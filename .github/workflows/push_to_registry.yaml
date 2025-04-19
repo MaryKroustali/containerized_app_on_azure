@@ -47,7 +47,7 @@ jobs:
       - name: "Login to Azure Container Registry"
         run: |
           az acr login --name ${{ inputs.image_registry_to_push }}
-      - name: "tag and Push image to Azure Container Registry"
+      - name: "Tag and Push image to Azure Container Registry"
         run: |
-          docker tag ${{ inputs.image_registry_to_pull }}/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }} ${{ inputs.image_registry_to_push }}.azurecr.io/${{ inputs.image_name }}:${{ inputs.image_tag }}
+          docker tag ${{ inputs.image_name }}:${{ inputs.image_tag }} ${{ inputs.image_registry_to_push }}.azurecr.io/${{ inputs.image_name }}:${{ inputs.image_tag }}
           docker push ${{ inputs.image_registry_to_push }}.azurecr.io/${{ inputs.image_name }}:${{ inputs.image_tag }}
