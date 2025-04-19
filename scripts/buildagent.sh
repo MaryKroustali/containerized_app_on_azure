@@ -23,6 +23,7 @@ response=$(curl -s -L \
   -H "Authorization: Bearer $token" \
   -H "X-GitHub-Api-Version: 2022-11-28")
 registrationToken=$(echo "$response" | jq -r .token)
+echo "updated......"
 sudo -u vmadmin ./config.sh --unattended --url https://github.com/$org/$repo/ --token $registrationToken --replace # Create the runner
 ./svc.sh install
 ./svc.sh start # Start running as a service
