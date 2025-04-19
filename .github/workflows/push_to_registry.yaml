@@ -18,6 +18,7 @@ on:  # Trigger this workflow manually
       image_registry_to_push:
         description: 'Azure Container Registry Name'
         required: true
+        default: '<acr-name>'
 
 permissions:
   id-token: write

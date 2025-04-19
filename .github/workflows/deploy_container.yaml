@@ -10,6 +10,7 @@ on:  # Trigger this workflow manually
       image:
         description: 'ACR Image URI'
         required: true
+        default: '<acr-name>.azurecr.io/record-store-app:1.0.0'
 
 permissions:
   id-token: write
@@ -18,7 +19,7 @@ permissions:
 jobs:
   deploy_application_infra:
     name: Deploy Container Infrastructure
-    runs-on: ubuntu-latest
+    runs-on: self-hosted # Use a self-hosted runner to push the image to the private acr
     steps:
       - name: "Upgrade to latest Bicep version"
         run: az bicep upgrade
