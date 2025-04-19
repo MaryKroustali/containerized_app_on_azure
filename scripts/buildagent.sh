@@ -14,7 +14,7 @@ repo="containerized_app_on_azure"  # Replace with your GitHub repository name
 
 # Set Github Runner
 cd /home/vmadmin/ # Create a folder under admin directory
-mkdir actions-runner; cd actions-runner 
+mkdir actions-runner; cd actions-runner
 curl -o actions-runner-linux-x64-2.323.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.323.0/actions-runner-linux-x64-2.323.0.tar.gz # Download the latest runner package
 tar xzf ./actions-runner-linux-x64-2.323.0.tar.gz # Extract the installer
 response=$(curl -s -L \
@@ -23,7 +23,7 @@ response=$(curl -s -L \
   -H "Authorization: Bearer $token" \
   -H "X-GitHub-Api-Version: 2022-11-28")
 registrationToken=$(echo "$response" | jq -r .token)
-echo "updated......"
+sudo chown -R vmadmin:vmadmin /home/vmadmin/actions-runner
 sudo -u vmadmin ./config.sh --unattended --url https://github.com/$org/$repo/ --token $registrationToken --replace # Create the runner
 ./svc.sh install
 ./svc.sh start # Start running as a service
