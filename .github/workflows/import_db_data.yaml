@@ -40,7 +40,7 @@ jobs:
       - name: "Allow Girhub Runner in firewall"
         run: |
           ip=$(hostname -I | awk '{print $1}') # get the IP address of the GitHub runner
-          az sql firewall-rule create --name github-runner --resource-group rg-database-infra-${{ inputs.application }} --server sql-${{ inputs.application }} --start-ip-address $ip --end-ip-address $ip
+          az sql server firewall-rule create --name github-runner --resource-group rg-database-infra-${{ inputs.application }} --server sql-${{ inputs.application }} --start-ip-address $ip --end-ip-address $ip
       - name: "Import Data to Database"
         uses: Azure/sql-action@v2.2.1
         with:
