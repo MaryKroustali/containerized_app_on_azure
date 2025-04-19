@@ -27,7 +27,7 @@ echo $registrationToken
 sudo chown -R vmadmin .
 sudo chmod -R 755 .
 echo "configuring........................."
-echo | ./config.sh --unattended --url https://github.com/$org/$repo/ --token $registrationToken --replace # Create the runner
+runuser -l vmadmin -c "./config.sh --unattended --url https://github.com/$org/$repo/ --token $registrationToken --replace" # Create the runner
 ./svc.sh install
 ./svc.sh start # Start running as a service
 
