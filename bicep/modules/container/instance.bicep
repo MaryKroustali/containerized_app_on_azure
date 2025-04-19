@@ -40,7 +40,7 @@ module rbac './authorization.bicep' = {
   scope: resourceGroup(acr_rg_name)
   params: {
     principalId: id.properties.principalId
-    roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d' // https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
+    role: 'AcrPull'
   }
 }
 
