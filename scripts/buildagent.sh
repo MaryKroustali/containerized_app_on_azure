@@ -23,9 +23,11 @@ response=$(curl -s -L \
   -H "Authorization: Bearer $token" \
   -H "X-GitHub-Api-Version: 2022-11-28")
 registrationToken=$(echo "$response" | jq -r .token)
-./config.sh --unattended --url https://github.com/$org/$repo/ --token $registrationToken --replace # Create the runner and start running as a service
+sudo chown -R vmadmin .
+sudo chmod -R 755 .
+./config.sh --unattended --url https://github.com/$org/$repo/ --token $registrationToken --replace # Create the runner
 sudo ./svc.sh install
-sudo ./svc.sh start
+sudo ./svc.sh start # Start running as a service
 
 # Install az cli
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
