@@ -38,6 +38,7 @@ module ci '../modules/container/instance.bicep' = {
   params: {
     name: 'ci-${application}'
     app_snet_id: snet_app.id
+    acr_rg_name: common_rg_name
     image: image
     port: 8080
     log_id: log.properties.customerId

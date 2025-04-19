@@ -4,6 +4,9 @@ param name string
 @description('Resource Location.')
 param location string = resourceGroup().location
 
+@description('Name of the resource group containing the Azure Container Registry.')
+param acr_rg_name string
+
 @description('The name of the image used to create the container instance.')
 param image string
 
@@ -20,9 +23,35 @@ param log_id string
 @secure()
 param log_key string
 
+resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
+  scope: resourceGroup(acr_rg_name)
+  name: split(image, '.azurecr.io')[0]  // get acr name
+}
+
+
+resource id 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30' = { // Identity for container instance
+  name: 'id-${name}'
+  location: location
+}
+
+// Owner role is required to deploy role assignments
+resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = { // Assign AcrPull permission to container instance
+  name: guid(acr.id, 'AcrPull')
+  properties: {
+    principalId: id.properties.principalId  // To assign permissions to a resource, the resource needs to have an identity
+    roleDefinitionId: 'AcrPull'
+  }
+}
+
 resource ci 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
   name: name
   location: location
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${id.id}': {}  // attach identity to container instance
+    }
+  }
   properties: {
     containers: [
       {
@@ -42,6 +71,12 @@ resource ci 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
             }
           }
         }
+      }
+    ]
+    imageRegistryCredentials: [ // authenticating to ACR using the identity permissions
+      {
+        server: acr.properties.loginServer
+        identity: id.id
       }
     ]
     osType: 'Linux' // APS.NET Core apps use Linux containers
