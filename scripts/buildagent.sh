@@ -1,4 +1,5 @@
-# Edit below commands based on guidelines in 
+#!/bin/bash
+# Edit below commands based on guidelines in
 # Github Repository Settings > Actions > Runners > New self-hosted runner (Linux)
 # Additionally to run as a service follow instructions on
 # https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/configuring-the-self-hosted-runner-application-as-a-service
