@@ -76,10 +76,19 @@ resource app_service 'Microsoft.Web/sites@2023-12-01' = {
 }
 ```
 
-Alternatively, Azure provides [container-based](https://azure.microsoft.com/en-us/products/category/containers) solutions. The following architecture will be used:
+Alternatively, Azure provides [container-based](https://azure.microsoft.com/en-us/products/category/containers) solutions. For simplicity the following archtecture will be used.
 
-[diagram]
-- acr to host the container image on azure
-- vnet
-- container instance to host the app
-- sql?
+New resources introduced:
+- `Container Registry`: A registry to store container images. 
+- `Container Instances`: A light container-based solution to host a containerized application.
+
+### Application Modifications
+Container instances aim to replace app service resource, along with app service plan and application insights. The main modification is the use of the container image instead of the source code. The image is pushed to the registry
+
+### Network modifications
+A registry with private connectivity is used to ensure that only authorized resources inside the network can pull/push images. The ACR is using a private endpoint along with a private dns zone `azurecr.io` to be accesible internally. Container Instance uses a [delegated subnet](./bicep/rgs/network.bicep), use explicitly only for container instances. To access the instances a private IP of this subnet is used.
+
+### Github Runner modification
+For this infrastructure a linux VM is used as a Github Runner so `docker` can be installed and used easily. th e configuration is similar to [private_app_on_azure](https://github.com/MaryKroustali/private_app_on_azure) but with a [bash script](./scripts/buildagent.sh) configuring the agent, installing az cli and docker.
+
+## Monitoring
