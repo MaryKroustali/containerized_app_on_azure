@@ -36,7 +36,7 @@ resource id 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30' = {
 
 // Assign AcrPull permission to container instance
 module rbac './authorization.bicep' = {
-  name: 'deploy-AcrPull-id-${name}'
+  name: 'deploy-id-${name}-AcrPull'
   scope: resourceGroup(acr_rg_name)
   params: {
     principalId: id.properties.principalId
