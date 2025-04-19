@@ -9,8 +9,8 @@ org="MaryKroustali"  # Replace with your GitHub organization name
 repo="containerized_app_on_azure"  # Replace with your GitHub repository name
 
 # Install helping tools
-sudo apt-get update -y
-sudo apt-get install jq -y
+# sudo apt-get update -y
+# sudo apt-get install jq -y
 
 # Set Github Runner
 cd /home/vmadmin/ # Create a folder under admin directory
@@ -25,7 +25,7 @@ response=$(curl -s -L \
 registrationToken=$(echo "$response" | jq -r .token)
 sudo chown -R vmadmin:vmadmin /home/vmadmin/actions-runner
 sudo -u vmadmin ./config.sh --unattended --url https://github.com/$org/$repo/ --token $registrationToken --replace # Create the runner
-sudo -u vmadmin ./svc.sh install
+sudo ./svc.sh install
 sudo ./svc.sh start # Start running as a service
 
 # # Install az cli
