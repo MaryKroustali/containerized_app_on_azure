@@ -63,6 +63,7 @@ param vnet_rg_name string
 param snet_id string
 
 @description('GitHub Personal Access Token to register Virtual Machine to Github Runners.')
+@secure()
 param github_pat string
 
 // Network Security Group

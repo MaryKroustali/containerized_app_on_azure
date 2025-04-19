@@ -9,6 +9,7 @@ param sql_server_admin_password string
 param vm_admin_username string
 @secure()
 param vm_admin_password string
+@secure()
 param github_pat string
 
 var vnet_rg_name = 'rg-network-infra-${application}'

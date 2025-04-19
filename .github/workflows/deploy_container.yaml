@@ -8,7 +8,7 @@ on:  # Trigger this workflow manually
         required: true
         default: 'record-store'
       image:
-        description: 'ACR Image URL'
+        description: 'ACR Image URI'
         required: true
 
 permissions:
