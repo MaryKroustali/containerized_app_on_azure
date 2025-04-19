@@ -15,5 +15,6 @@ resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   properties: {
     principalId: principalId
     roleDefinitionId: roleDefinition.id
+    principalType: 'ServicePrincipal'
   }
 }
