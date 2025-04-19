@@ -62,26 +62,26 @@ jobs:
           region: 'westeurope'
           template: ./bicep/rgs/common.bicep
           parameters: application=${{ inputs.application }} sql_server_admin_username=${{ secrets.SQL_SERVER_ADMIN_USERNAME }} sql_server_admin_password=${{ secrets.SQL_SERVER_ADMIN_PASSWORD }} vm_admin_username=${{ secrets.VM_ADMIN_USERNAME }} vm_admin_password=${{ secrets.VM_ADMIN_PASSWORD }} github_pat=${{ secrets.PAT }}
-  # deploy_database_infra:
-  #   name: Deploy Database Infrastructure
-  #   needs: deploy_common_infra
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: "Upgrade to latest Bicep version"
-  #       run: az bicep upgrade
-  #     - name: "Login to Azure"
-  #       uses: azure/login@v1
-  #       with:
-  #         # Set secrets value as described in https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect#prerequisites
-  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
-  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  #     - name: "Checkout repository"
-  #       uses: actions/checkout@main
-  #     - name: "Deploy in Subscription scope"
-  #       uses: azure/arm-deploy@v2
-  #       with:
-  #         scope: 'subscription'
-  #         region: 'westeurope'
-  #         template: ./bicep/rgs/database.bicep
-  #         parameters: application=${{ inputs.application }} sql_db_name=${{ inputs.database }}
+  deploy_database_infra:
+    name: Deploy Database Infrastructure
+    needs: deploy_common_infra
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Upgrade to latest Bicep version"
+        run: az bicep upgrade
+      - name: "Login to Azure"
+        uses: azure/login@v1
+        with:
+          # Set secrets value as described in https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect#prerequisites
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: "Checkout repository"
+        uses: actions/checkout@main
+      - name: "Deploy in Subscription scope"
+        uses: azure/arm-deploy@v2
+        with:
+          scope: 'subscription'
+          region: 'westeurope'
+          template: ./bicep/rgs/database.bicep
+          parameters: application=${{ inputs.application }} sql_db_name=${{ inputs.database }}
