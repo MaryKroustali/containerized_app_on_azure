@@ -37,9 +37,10 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: "Allow in firewall"
+      - name: "Allow Girhub Runner in firewall"
         run: |
-          az sql server update --enable-public-network true --name sql-${{ inputs.application }} --resource-group rg-database-infra-${{ inputs.application }}
+          ip=$(hostname -I | awk '{print $1}') # get the IP address of the GitHub runner
+          az sql firewall-rule create --name github-runner --resource-group rg-database-infra-${{ inputs.application }} --server sql-${{ inputs.application }} --start-ip-address $ip --end-ip-address $ip
       - name: "Import Data to Database"
         uses: Azure/sql-action@v2.2.1
         with:
