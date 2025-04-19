@@ -40,7 +40,7 @@ module rbac './authorization.bicep' = {
   scope: resourceGroup(acr_rg_name)
   params: {
     principalId: id.properties.principalId
-    role: 'AcrPull'
+    role: '7f951dda-4ed3-4680-a7ca-43fe172d538d' // https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
   }
 }
 
@@ -104,4 +104,7 @@ resource ci 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
       }
     }
   }
+  dependsOn: [
+    rbac // ensure role is assiged before deploying
+  ]
 }

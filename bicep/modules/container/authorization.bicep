@@ -10,7 +10,7 @@ resource roleDefinition 'Microsoft.Authorization/roleDefinitions@2018-01-01-prev
 }
 
 // Owner role is required to deploy role assignments
-resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = { 
+resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(resourceGroup().id, principalId, roleDefinition.id)
   properties: {
     principalId: principalId
