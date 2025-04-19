@@ -28,17 +28,18 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
   name: split(image, '.azurecr.io')[0]  // get acr name
 }
 
-
-resource id 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30' = { // Identity for container instance
+// A resource needs to have an identity in order to be assigned permissions
+resource id 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30' = {
   name: 'id-${name}'
   location: location
 }
 
-// Owner role is required to deploy role assignments
-resource rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = { // Assign AcrPull permission to container instance
-  name: guid(acr.id, 'AcrPull')
-  properties: {
-    principalId: id.properties.principalId  // To assign permissions to a resource, the resource needs to have an identity
+// Assign AcrPull permission to container instance
+module rbac './authorization.bicep' = {
+  name: 'deploy-AcrPull-id-${name}'
+  scope: resourceGroup(acr_rg_name)
+  params: {
+    principalId: id.properties.principalId
     roleDefinitionId: 'AcrPull'
   }
 }
