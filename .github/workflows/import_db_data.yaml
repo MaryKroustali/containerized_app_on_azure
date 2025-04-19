@@ -23,7 +23,7 @@ permissions:
 jobs:
   import_data_to_db:
     name: Import Data to SQL Database
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: "Checkout Application repository"
         uses: actions/checkout@main
