@@ -26,7 +26,7 @@ registrationToken=$(echo "$response" | jq -r .token)
 sudo chown -R vmadmin:vmadmin /home/vmadmin/actions-runner
 sudo -u vmadmin ./config.sh --unattended --url https://github.com/$org/$repo/ --token $registrationToken --replace # Create the runner
 sudo -u vmadmin ./svc.sh install
-./svc.sh start # Start running as a service
+sudo ./svc.sh start # Start running as a service
 
 # # Install az cli
 # curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
