@@ -22,6 +22,7 @@ on:  # Trigger this workflow manually
 permissions:
   id-token: write
   contents: read
+  packages: read
 
 jobs:
   push_to_registry:
