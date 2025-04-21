@@ -1,14 +1,15 @@
-# Containerized App on Azure
+# App as a Container on Azure
 
-This repository focuses on the containerization of the [Record Store Application](https://github.com/MaryKroustali/record_store_app) and its deployment on Azure Container Instances.
-
-## Preparation
-The application gets upgraded to ASP.NET Core so it can easily get containerized in a Linux container using this [Visual Studio 2022](https://learn.microsoft.com/en-us/aspnet/core/migration/mvc?view=aspnetcore-9.0)
+This repository demonstrates how to containerize the [Record Store Application](https://github.com/MaryKroustali/record_store_app) and deploy it to Azure using serverless container hosting services.
 
 ## Containerization
-The application gets containerized using [Visual Studio Container Tools](https://learn.microsoft.com/en-us/visualstudio/containers/overview?view=vs-2022&toc=%2Fdotnet%2Fnavigate%2Fdevops-testing%2Ftoc.json&bc=%2Fdotnet%2Fbreadcrumb%2Ftoc.json) or [Docker Desktop](https://learn.microsoft.com/en-us/dotnet/core/docker/build-container?tabs=linux&pivots=dotnet-8-0#create-the-dockerfile).
 
-### Dockerfile
+### Preparation
+The application is first upgraded to ASP.NET Core using [Visual Studio 2022](https://learn.microsoft.com/en-us/aspnet/core/migration/mvc?view=aspnetcore-9.0) to enable easy containerization in a Linux environment.
+
+### Container Image
+The application is containerized using [Visual Studio Container Tools](https://learn.microsoft.com/en-us/visualstudio/containers/overview?view=vs-2022&toc=%2Fdotnet%2Fnavigate%2Fdevops-testing%2Ftoc.json&bc=%2Fdotnet%2Fbreadcrumb%2Ftoc.json) or [Docker Desktop](https://learn.microsoft.com/en-us/dotnet/core/docker/build-container?tabs=linux&pivots=dotnet-8-0#create-the-dockerfile).
+The following `Dockerfile` is used:
 ```Dockerfile
 FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:35792ea4ad1db051981f62b313f1be3b46b1f45cadbaa3c288cd0d3056eefb83 AS build
 WORKDIR /App
@@ -27,42 +28,41 @@ COPY --from=build /App/out .
 # Replace with project's dll file
 ENTRYPOINT ["dotnet", "WebApplication8Core.dll"]
 ```
-
-A container image `record-store-app` is built using Dockerfile and executing below command inside the Dockerfile's directory.
+A docker image named `record-store-app` is built using the following command:
 ```bash
 docker build -t record-store-app .
 ```
 
-### Local Execution
-To test the application, create a container locally to test the application
+### Running Locally
+To test the application, a local container can be created:
 ```bash
 sudo docker run -p 8080:8080 -it --rm record-store-app
 ```
-
-Visit http://localhost:8080
+The application is accessible at http://localhost:8080
 
 ![Containerized App](images/app-container.png)
 
-### Container Registry
-To make the image available upload it to a registry like [Github Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
+## Container Registry
+The image is pushed to [Github Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) to be publicly available.
 
-1. authenticating to the registry where \<USERNAME>  is the user profile name
+1. Authenticating to the registry:
 ```bash
-export CR_PAT=<PAT> # ensure pat has write packages permission
+export CR_PAT=<PAT> # PAT must include write:packages permission
 echo $CR_PAT | docker login ghcr.io -u <USERNAME> --password-stdin
 ```
-tagging and uploading the image
+2. Tagging and pushing the image:
 ```bash
 docker tag record-store-app ghcr.io/<USERNAME>/record-store-app:1.0.0
 docker push ghcr.io/<USERNAME>/record-store-app:1.0.0
 ```
-The image is now available at Pachages Section and can be pulled using
+3. The image can be pulled using:
 ```
 docker pull ghcr.io/USERNAME/record-store-app:1.0.0
 ```
+Also available at [Github Packages](https://github.com/users/MaryKroustali/packages/container/package/record-store-app).
 
 ## Hosting on Azure
-To host the app on Azure, the arcitecture used in [private_app_on_azure](https://github.com/MaryKroustali/private_app_on_azure) repository can be used. An App Service can also work with containers by using `linuxFxVersion` property.
+For deployment, the architecture from the [private_app_on_azure](https://github.com/MaryKroustali/private_app_on_azure) repository can be used. An App Service can consume a container by setting the `linuxFxVersion` property:
 ```bicep
 resource app_service 'Microsoft.Web/sites@2023-12-01' = {
   name: name
@@ -75,20 +75,54 @@ resource app_service 'Microsoft.Web/sites@2023-12-01' = {
   }
 }
 ```
+Alternatively, Azure provides multiple [container-based](https://azure.microsoft.com/en-us/products/category/containers) hosting solutions. For simplicity, the architecture in this repository uses:
+- `Container Registry (acrrecordstore7pat)`: To store the container image
+- `Container Instances (ci-record-store)`: For lightweight deployment
+- `User-assigned Managed Identity (id-ci-record-store)`: For authorizing the Container Instance to pull images from the Container Registry
 
-Alternatively, Azure provides [container-based](https://azure.microsoft.com/en-us/products/category/containers) solutions. For simplicity the following archtecture will be used.
+![Architecture](./images/architecture.jpg)
 
-New resources introduced:
-- `Container Registry`: A registry to store container images. 
-- `Container Instances`: A light container-based solution to host a containerized application.
+### Network Configuration
+To secure the image access, a private Azure Container Registry (ACR) is used with a private endpoint and a private DNS zone `privatelink.azurecr.io`.
 
-### Application Modifications
-Container instances aim to replace app service resource, along with app service plan and application insights. The main modification is the use of the container image instead of the source code. The image is pushed to the registry
+Azure Container Instances operate within a delegated subnet and are accessed through private IPs only.
 
-### Network modifications
-A registry with private connectivity is used to ensure that only authorized resources inside the network can pull/push images. The ACR is using a private endpoint along with a private dns zone `azurecr.io` to be accesible internally. Container Instance uses a [delegated subnet](./bicep/rgs/network.bicep), use explicitly only for container instances. To access the instances a private IP of this subnet is used.
+The GitHub Runner functions as a jump host to interact with the private network.
 
-### Github Runner modification
-For this infrastructure a linux VM is used as a Github Runner so `docker` can be installed and used easily. th e configuration is similar to [private_app_on_azure](https://github.com/MaryKroustali/private_app_on_azure) but with a [bash script](./scripts/buildagent.sh) configuring the agent, installing az cli and docker.
+### Github Runner
+A Linux virtual machine is configured as a GitHub self-hosted runner using a [bash script](./scripts/buildagent.sh). It installs:
+- Azure CLI
+- Docker
 
-## Monitoring
+The runner pulls the image from GitHub, tags it and pushes it to the private ACR. The service principal used for this task requires `AcrPush` permissions.
+
+### Application Deployment
+In this architecture, App Service, App service Plan and Application Insights are removed.
+
+The Container Instance pulls the image from the private ACR using a **user-assigned managed identity** with `AcrPull` permissions.
+
+To test the deployment, the GitHub Runner can be used as a jump host to connect into the private network and `curl` the private IP address of the container instance.
+
+**Monitoring**
+
+Logs and basic container insights are available in Log Analytics Workspace resource under `ContainerEvent_CL` table:
+
+![Container Logs](./images/container-insights.png)
+
+## Github Actions
+Several workflows automate the deployment process. These are similar to those found in the [private_app_on_azure](https://github.com/MaryKroustali/private_app_on_azure?tab=readme-ov-file#github-actions) repository:
+- `Deploy Infrastructure`: Creates the necessary Azure resources (excluding the container).
+![Infra Workflow](./images/infra-workflow-jobs.png)
+- `Push Image to ACR`: Tags and pushes the Docker image to ACR, using the Github Runner.
+- `Deploy Container`: Deploys the container to Azure after the image is available.
+- `Import Data to Database`: Importing data into the SQL database.
+
+[![Deploy Infrastructure](https://github.com/MaryKroustali/containerized_app_on_azure/actions/workflows/deploy_infra_no_container.yaml/badge.svg)](https://github.com/MaryKroustali/containerized_app_on_azure/actions/workflows/deploy_infra_no_container.yaml)  [![Push Image to ACR](https://github.com/MaryKroustali/containerized_app_on_azure/actions/workflows/push_to_registry.yaml/badge.svg)](https://github.com/MaryKroustali/containerized_app_on_azure/actions/workflows/push_to_registry.yaml) [![Deploy Container](https://github.com/MaryKroustali/containerized_app_on_azure/actions/workflows/deploy_container.yaml/badge.svg)](https://github.com/MaryKroustali/containerized_app_on_azure/actions/workflows/deploy_container.yaml) [![Import Data to Database](https://github.com/MaryKroustali/containerized_app_on_azure/actions/workflows/import_db_data.yaml/badge.svg)](https://github.com/MaryKroustali/containerized_app_on_azure/actions/workflows/import_db_data.yaml)
+
+## Limitations
+- Container Instances are ephemeral and not ideal for long-running production workloads.
+- Azure Container Instances do not support autoscaling.
+- ACI logs are available via Container Insights but lack long-term aggregation features.
+
+# Next Steps
+[kubernetes_app_on_azure](https://github.com/MaryKroustali/kubernetes_on_azure): Deploying the Record Store application using Azure Kubernetes service (AKS).
