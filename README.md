@@ -38,9 +38,7 @@ To test the application, a local container can be created:
 ```bash
 sudo docker run -p 8080:8080 -it --rm record-store-app
 ```
-The application is accessible at http://localhost:8080
-
-![Containerized App](images/app-container.png)
+The application is accessible at http://localhost:8080.
 
 ## Container Registry
 The image is pushed to [Github Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) to be publicly available.
@@ -125,4 +123,4 @@ Several workflows automate the deployment process. These are similar to those fo
 - ACI logs are available via Container Insights but lack long-term aggregation features.
 
 # Next Steps
-[kubernetes_app_on_azure](https://github.com/MaryKroustali/kubernetes_on_azure): Deploying the Record Store application using Azure Kubernetes service (AKS).
+[kubernetes_app_on_azure](https://github.com/MaryKroustali/kubernetes_on_azure): Deploying the Record Store application using Azure Kubernetes Service (AKS).
