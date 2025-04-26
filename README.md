@@ -120,7 +120,7 @@ Several workflows automate the deployment process. These are similar to those fo
 ## Limitations
 - Container Instances are ephemeral and not ideal for long-running production workloads.
 - Azure Container Instances do not support autoscaling.
-- ACI logs are available via Container Insights but lack long-term aggregation features.
+- ACI applications require additional infastructure to be safely exposed to the internet.
 
 # Next Steps
-[kubernetes_app_on_azure](https://github.com/MaryKroustali/kubernetes_on_azure): Deploying the Record Store application using Azure Kubernetes Service (AKS).
+[app_on_azure_kubernetes](https://github.com/MaryKroustali/app_on_azure_kubernetes): Deploying and exposing the Record Store application on Azure Kubernetes Service (AKS).
