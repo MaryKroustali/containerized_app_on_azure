@@ -68,7 +68,7 @@ resource app_service 'Microsoft.Web/sites@2023-12-01' = {
   properties: {
     serverFarmId: asp_id
     siteConfig: {
-      linuxFxVersion: 'ghcr.io/<USERNAME>/record-store-app:1.0.0'
+      linuxFxVersion: 'DOCKER|ghcr.io/<USERNAME>/record-store-app:1.0.0'
     }
   }
 }
